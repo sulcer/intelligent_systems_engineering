@@ -9,6 +9,7 @@ readme = "README.md"
 serve = "uvicorn src.serve.server:app --reload"
 fetch_data = "python src/data/fetch_data.py"
 test = "pytest"
+lint = "ruff check ."
 
 [tool.poetry.dependencies]
 python = "^3.12"
@@ -23,6 +24,7 @@ seaborn = "^0.13.2"
 tensorflow = "^2.16.1"
 requests = "^2.31.0"
 scipy = "^1.12.0"
+ruff = "^0.3.2"
 
 
 [build-system]
