@@ -14,8 +14,8 @@ class Fetcher:
         response = requests.get(self.url)
         data = response.json()
 
-        for station in data:
-            station = Station(**station)
+        for station_data in data:
+            station = Station(**station_data)
 
             csv_file = f"../../data/raw/{station.name}.csv"
             if not os.path.exists(csv_file):
@@ -23,7 +23,7 @@ class Fetcher:
                     columns=["name", "address", "bike_stands", "available_bike_stands", "available_bikes", "date"])
                 df.to_csv(csv_file, index=False)
 
-            station_data = pd.DataFrame([{
+            new_station_entry = pd.DataFrame([{
                 "name": station.name,
                 "address": station.address,
                 "bike_stands": station.bike_stands,
@@ -32,7 +32,7 @@ class Fetcher:
                 "date": station.last_update
             }])
 
-            station_data.to_csv(csv_file, mode="a", header=False, index=False)
+            new_station_entry.to_csv(csv_file, mode="a", header=False, index=False)
 
 
 def main():
