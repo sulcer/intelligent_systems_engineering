@@ -37,3 +37,11 @@ def create_model(input_shape):
     optimizer = Adam(learning_rate=0.01)
     model.compile(optimizer=optimizer, loss="mean_squared_error")
     return model
+
+
+def write_evaluation_metrics_to_file(model_name, mse, mae, evs, file_path: str):
+    with open(file_path, "w") as file:
+        file.write(f"Model: {model_name}\n")
+        file.write(f"Train MSE: {mse}\n")
+        file.write(f"Train MAE: {mae}\n")
+        file.write(f"Train EVS: {evs}\n")
