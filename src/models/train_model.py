@@ -1,8 +1,11 @@
 import joblib
 import pandas as pd
+from keras import Sequential, Input
+from keras.src.layers import GRU, Dropout, Dense
 from sklearn.preprocessing import MinMaxScaler
 from src.models.utils.utils import create_test_train_split, create_time_series, create_model, \
     information_gain_feature_selection
+from tensorflow.keras.optimizers import Adam
 
 if __name__ == "__main__":
     data = pd.read_csv("../../data/processed/mbajk_dataset.csv")
@@ -26,7 +29,8 @@ if __name__ == "__main__":
     X_test, y_test = create_time_series(test_data, window_size)
 
     model = create_model(X_train)
+
     model.fit(X_train, y_train, epochs=10, batch_size=64, validation_data=(X_test, y_test), verbose=1)
 
-    joblib.dump(scaler, "../models/min_max_scaler.gz")
-    model.save(f"../models/mbajk_{model.name}.keras")
+    joblib.dump(scaler, "../../models/min_max_scaler.gz")
+    model.save(f"../../models/mbajk_{model.name}.h5")

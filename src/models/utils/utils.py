@@ -1,10 +1,11 @@
 from typing import Tuple
 import numpy as np
 import pandas as pd
-from keras import Sequential, Input
-from keras.src.layers import GRU, Dropout, Dense
-from keras.src.optimizers import Adam
+from keras.models import Sequential
+from keras.layers import GRU, Dropout, Dense, Input
+from keras.optimizers import Adam
 from sklearn.feature_selection import mutual_info_regression
+from sklearn.metrics import mean_squared_error, mean_absolute_error, explained_variance_score
 
 
 def create_test_train_split(dataset: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
@@ -36,7 +37,7 @@ def create_model(input_shape):
     model.add(Dense(1))
 
     optimizer = Adam(learning_rate=0.01)
-    model.compile(optimizer=optimizer, loss="mean_squared_error")
+    model.compile(optimizer, loss="mean_squared_error")
     return model
 
 
@@ -57,3 +58,17 @@ def information_gain_feature_selection(data: pd.DataFrame, target_variable: str)
     feature_scores = feature_scores.sort_values(by='Information_Gain', ascending=False)
 
     return feature_scores
+
+
+def evaluate_model(y_actual, predicted, dataset, scaler):
+    predicted_copy = np.repeat(predicted, dataset.shape[1], axis=-1)
+    pred = scaler.inverse_transform(np.reshape(predicted_copy, (len(predicted), dataset.shape[1])))[:, 0]
+
+    actual_copy = np.repeat(y_actual, dataset.shape[1], axis=-1)
+    actual = scaler.inverse_transform(np.reshape(actual_copy, (len(y_actual), dataset.shape[1])))[:, 0]
+
+    mse = mean_squared_error(actual, pred)
+    mae = mean_absolute_error(actual, pred)
+    evs = explained_variance_score(actual, pred)
+
+    return mse, mae, evs
