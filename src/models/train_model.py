@@ -1,16 +1,19 @@
 import joblib
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
-from src.models.utils.utils import create_test_train_split, create_time_series, create_model
+from src.models.utils.utils import create_test_train_split, create_time_series, create_model, \
+    information_gain_feature_selection
 
 if __name__ == "__main__":
     data = pd.read_csv("../../data/processed/mbajk_dataset.csv")
     data.drop(columns=["date"], inplace=True)
 
     target_variable = "available_bike_stands"
-    features = [target_variable] + [col for col in data.columns if col != target_variable]
-    data = data[features]
 
+    features_to_keep = information_gain_feature_selection(data, target_variable)['Feature'][:3].tolist()
+
+    features = [target_variable] + features_to_keep
+    data = data[features]
     train_data, test_data = create_test_train_split(data)
 
     scaler = MinMaxScaler()

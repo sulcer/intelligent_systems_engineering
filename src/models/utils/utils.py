@@ -4,6 +4,7 @@ import pandas as pd
 from keras import Sequential, Input
 from keras.src.layers import GRU, Dropout, Dense
 from keras.src.optimizers import Adam
+from sklearn.feature_selection import mutual_info_regression
 
 
 def create_test_train_split(dataset: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
@@ -45,3 +46,14 @@ def write_evaluation_metrics_to_file(model_name, mse, mae, evs, file_path: str):
         file.write(f"Train MSE: {mse}\n")
         file.write(f"Train MAE: {mae}\n")
         file.write(f"Train EVS: {evs}\n")
+
+
+def information_gain_feature_selection(data: pd.DataFrame, target_variable: str) -> pd.DataFrame:
+    input_data = data.columns.tolist()
+    input_data.remove(target_variable)
+    ig_scores = mutual_info_regression(data[input_data], data[target_variable])
+
+    feature_scores = pd.DataFrame({'Feature': data[input_data].columns, 'Information_Gain': ig_scores})
+    feature_scores = feature_scores.sort_values(by='Information_Gain', ascending=False)
+
+    return feature_scores
