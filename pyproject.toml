@@ -6,7 +6,7 @@ authors = ["sulcer <gregor.sulcer@student.um.si>"]
 readme = "README.md"
 
 [tool.poe.tasks]
-serve = "uvicorn src.serve.server:app --reload"
+serve = "uvicorn src.serve.app.main:app --reload"
 fetch_data = "python src/data/fetch_data.py"
 test = "pytest"
 lint = "ruff check ."

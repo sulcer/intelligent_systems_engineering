@@ -1,6 +1,9 @@
 from fastapi import FastAPI
+from keras.src.saving import load_model
 
 app = FastAPI()
+
+model = load_model("../../../models/mbajk_GRU.h5")
 
 
 @app.get("/")

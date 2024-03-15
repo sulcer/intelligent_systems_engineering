@@ -1,11 +1,8 @@
 import joblib
 import pandas as pd
-from keras import Sequential, Input
-from keras.src.layers import GRU, Dropout, Dense
 from sklearn.preprocessing import MinMaxScaler
 from src.models.utils.utils import create_test_train_split, create_time_series, create_model, \
     information_gain_feature_selection
-from tensorflow.keras.optimizers import Adam
 
 if __name__ == "__main__":
     data = pd.read_csv("../../data/processed/mbajk_dataset.csv")

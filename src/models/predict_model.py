@@ -1,7 +1,6 @@
 import joblib
 import pandas as pd
 from keras.models import load_model
-
 from src.models.utils.utils import create_test_train_split, create_time_series, write_evaluation_metrics_to_file, \
     evaluate_model, information_gain_feature_selection
 
@@ -35,5 +34,5 @@ if __name__ == "__main__":
     mse_train, mae_train, evs_train = evaluate_model(y_train, predicted_train, train_data, scaler)
     mse_test, mae_test, evs_test = evaluate_model(y_test, predicted_test, test_data, scaler)
 
-    write_evaluation_metrics_to_file(model.name, mse_train, mae_train, evs_train, "../../reports/metrics_train.txt")
+    write_evaluation_metrics_to_file(model.name, mse_train, mae_train, evs_train, "../../reports/train_metrics.txt")
     write_evaluation_metrics_to_file(model.name, mse_test, mae_test, evs_test, "../../reports/metrics.txt")
