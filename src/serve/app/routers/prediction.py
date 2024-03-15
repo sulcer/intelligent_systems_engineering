@@ -4,6 +4,7 @@ import numpy as np
 from fastapi import APIRouter, HTTPException
 from keras.models import load_model
 from pydantic import BaseModel
+from src.serve.app.utils.helpers import use_model_prediction
 
 router = APIRouter(
     prefix="/mbajk",
@@ -48,12 +49,6 @@ def predict(data: List[PredictionInput]):
 
     X = create_time_series(scaled_data, window_size, feature_cols)
 
-    prediction = model.predict(X)
+    prediction = use_model_prediction(X, model, scaler, window_size, feature_cols)
 
-    prediction_copies_array = np.repeat(prediction, len(feature_cols), axis=-1)
-
-    prediction_reshaped = np.reshape(prediction_copies_array, (len(prediction), len(feature_cols)))
-
-    prediction = scaler.inverse_transform(prediction_reshaped)[:, 0]
-
-    return {"prediction": prediction.tolist()[0]}
+    return {"prediction": prediction}
