@@ -1,10 +1,9 @@
 from typing import List
 import joblib
-import numpy as np
 from fastapi import APIRouter, HTTPException
 from keras.models import load_model
 from pydantic import BaseModel
-from src.serve.app.utils.helpers import use_model_prediction
+from src.serve.app.utils.helpers import use_model_prediction, create_time_series
 
 router = APIRouter(
     prefix="/mbajk",
@@ -22,17 +21,6 @@ class PredictionInput(BaseModel):
 
 model = load_model("models/mbajk_GRU.h5")
 scaler = joblib.load("models/min_max_scaler.gz")
-
-
-def create_time_series(data, window_size, feature_cols):
-    sequences = []
-    n_samples = len(data)
-
-    for i in range(window_size, n_samples + 1):
-        sequence = data[i - window_size:i, feature_cols]
-        sequences.append(sequence)
-
-    return np.array(sequences)
 
 
 @router.post("/predict")

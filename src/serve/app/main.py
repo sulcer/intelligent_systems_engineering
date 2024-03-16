@@ -1,7 +1,17 @@
 from fastapi import FastAPI
-from .routers import health, prediction
+from starlette.middleware.cors import CORSMiddleware
+from .routers import health
 
 app = FastAPI()
 
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(health.router)
-app.include_router(prediction.router)
