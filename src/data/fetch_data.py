@@ -11,6 +11,7 @@ class Fetcher:
         self.api_key = api_key
         self.url = f"https://api.jcdecaux.com/vls/v1/stations?contract={contract}&apiKey={api_key}"
         self.weather_url = "https://api.open-meteo.com/v1/forecast?"
+        self.data_path = "data"
 
     def fetch_data(self):
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -19,7 +20,7 @@ class Fetcher:
         response.raise_for_status()
         data = response.json()
 
-        csv_file = f"../../data/raw/mbajk_stations.csv"
+        csv_file = f"data/raw/mbajk_stations.csv"
         if not os.path.exists(csv_file):
             df = pd.DataFrame(
                 columns=["date",
@@ -60,7 +61,7 @@ class Fetcher:
         response.raise_for_status()
         data = response.json()["current"]
 
-        csv_file = f"../../data/raw/weather.csv"
+        csv_file = f"data/raw/weather.csv"
         if not os.path.exists(csv_file):
             df = pd.DataFrame(
                 columns=["date",

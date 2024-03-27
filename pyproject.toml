@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.poe.tasks]
 serve = "uvicorn src.serve.app.main:app --reload"
-fetch_data = "python src/data/fetch_data.py"
+fetch_data = "python3 -m src.data.fetch_data"
 test = "pytest"
 lint = "ruff check ."
 
