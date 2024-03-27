@@ -23,6 +23,7 @@ class Fetcher:
         if not os.path.exists(csv_file):
             df = pd.DataFrame(
                 columns=["date",
+                         "number",
                          "name",
                          "address",
                          "bike_stands",
@@ -37,6 +38,7 @@ class Fetcher:
 
             new_station_entry = pd.DataFrame([{
                 "date": date,
+                "number": station.number,
                 "name": station.name,
                 "address": station.address,
                 "bike_stands": station.bike_stands,

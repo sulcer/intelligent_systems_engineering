@@ -12,7 +12,7 @@ def main():
     target_feature = "available_bike_stands"
     input_cols = merged_df.columns.tolist()
 
-    for i in ["name", "address", "bike_stands", "available_bikes", "lon", "lat"]:
+    for i in ["number", "name", "address", "bike_stands", "available_bikes", "lon", "lat"]:
         input_cols.remove(i)
 
     top_features = get_top_features(merged_df[input_cols], target_feature, 5)
@@ -47,7 +47,7 @@ def map_data_to_station(df, target_feature, top_features):
             new_station = pd.DataFrame(
                 columns=[[target_feature] + top_features]
             )
-            new_station.to_csv(f"../../data/processed/{row['name']}.csv", index=False)
+            new_station.to_csv(f"../../data/processed/station_{row['number']}.csv", index=False)
 
         new_station_entry = pd.DataFrame([{
             target_feature: row[target_feature],
@@ -58,7 +58,8 @@ def map_data_to_station(df, target_feature, top_features):
             top_features[4]: row[top_features[4]]
         }])
 
-        new_station_entry.to_csv(f"../../data/processed/{row['name']}.csv", mode="a", header=False, index=False)
+        new_station_entry.to_csv(f"../../data/processed/station_{row['number']}.csv",
+                                 mode="a", header=False, index=False)
 
 
 if __name__ == '__main__':
