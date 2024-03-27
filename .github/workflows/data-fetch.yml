@@ -36,7 +36,3 @@ jobs:
           git add .
           git diff-index --quiet HEAD || (git commit -a -m "action: fetch latest data" --allow-empty)
           git push
-
-      - name: Process data
-        run: |
-          poetry run poe process
