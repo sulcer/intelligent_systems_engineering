@@ -42,24 +42,19 @@ def get_top_features(df, target_feature, num_features):
 
 
 def map_data_to_station(df, target_feature, top_features):
-    for index, row in df.iterrows():
-        if not os.path.exists(f"../../data/raw/{row['name']}.csv"):
-            new_station = pd.DataFrame(
-                columns=[[target_feature] + top_features]
-            )
-            new_station.to_csv(f"../../data/processed/station_{row['number']}.csv", index=False)
+    for _, row in df.iterrows():
+        station_csv_path = f"../../data/processed/station_{row['number']}.csv"
 
-        new_station_entry = pd.DataFrame([{
-            target_feature: row[target_feature],
-            top_features[0]: row[top_features[0]],
-            top_features[1]: row[top_features[1]],
-            top_features[2]: row[top_features[2]],
-            top_features[3]: row[top_features[3]],
-            top_features[4]: row[top_features[4]]
-        }])
+        if not os.path.exists(station_csv_path):
+            new_station = pd.DataFrame(columns=[target_feature] + top_features)
+            new_station.to_csv(station_csv_path, index=False)
 
-        new_station_entry.to_csv(f"../../data/processed/station_{row['number']}.csv",
-                                 mode="a", header=False, index=False)
+        new_station_entry = pd.DataFrame({
+            target_feature: [row[target_feature]],
+            **{feature: [row[feature]] for feature in top_features}
+        })
+
+        new_station_entry.to_csv(station_csv_path, mode="a", header=False, index=False)
 
 
 if __name__ == '__main__':
