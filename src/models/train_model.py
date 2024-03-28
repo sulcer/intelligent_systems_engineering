@@ -24,8 +24,11 @@ def train_model(station_number: int) -> None:
 
     model.fit(X_train, y_train, epochs=10, batch_size=2, validation_data=(X_test, y_test), verbose=1)
 
-    joblib.dump(scaler, f"../../models/min_max_scaler_{station_number}.gz")
-    model.save(f"../../models/mbajk_{model.name}_{station_number}.h5")
+    if not os.path.exists(f"../../models/station_{station_number}"):
+        os.makedirs(f"../../models/station_{station_number}")
+
+    joblib.dump(scaler, f"../../models/station_{station_number}/scaler.gz")
+    model.save(f"../../models/station_{station_number}/model.h5")
 
     print(f"Model for station {station_number} trained")
 
