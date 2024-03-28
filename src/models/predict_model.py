@@ -3,7 +3,7 @@ import joblib
 import pandas as pd
 from keras.models import load_model
 from src.models.utils.utils import create_test_train_split, create_time_series, write_evaluation_metrics_to_file, \
-    evaluate_model, information_gain_feature_selection
+    evaluate_model
 
 
 def predict_model(station_number: int) -> None:
