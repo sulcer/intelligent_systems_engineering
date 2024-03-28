@@ -1,3 +1,4 @@
+import os
 import joblib
 import pandas as pd
 from keras.models import load_model
@@ -5,25 +6,17 @@ from src.models.utils.utils import create_test_train_split, create_time_series, 
     evaluate_model, information_gain_feature_selection
 
 
-if __name__ == "__main__":
-    data = pd.read_csv("../../data/processed/mbajk_dataset.csv")
-    data.drop(columns=["date"], inplace=True)
+def predict_model(station_number: int) -> None:
+    data = pd.read_csv(f"../../data/processed/station_{station_number}.csv")
 
-    model = load_model("../../models/mbajk_GRU.h5")
-    scaler = joblib.load("../../models/min_max_scaler.gz")
+    model = load_model(f"../../models/station_{station_number}/model.h5")
+    scaler = joblib.load(f"../../models/station_{station_number}/scaler.gz")
 
-    target_variable = "available_bike_stands"
-
-    features_to_keep = information_gain_feature_selection(data, target_variable)['Feature'][:3].tolist()
-
-    features = [target_variable] + features_to_keep
-    data = data[features]
     train_data, test_data = create_test_train_split(data)
-
     train_data = scaler.fit_transform(train_data)
     test_data = scaler.transform(test_data)
 
-    window_size = 50
+    window_size = 2
 
     X_train, y_train = create_time_series(train_data, window_size)
     X_test, y_test = create_time_series(test_data, window_size)
@@ -34,5 +27,21 @@ if __name__ == "__main__":
     mse_train, mae_train, evs_train = evaluate_model(y_train, predicted_train, train_data, scaler)
     mse_test, mae_test, evs_test = evaluate_model(y_test, predicted_test, test_data, scaler)
 
-    write_evaluation_metrics_to_file(model.name, mse_train, mae_train, evs_train, "../../reports/train_metrics.txt")
-    write_evaluation_metrics_to_file(model.name, mse_test, mae_test, evs_test, "../../reports/metrics.txt")
+    if not os.path.exists(f"../../reports/station_{station_number}"):
+        os.makedirs(f"../../reports/station_{station_number}")
+
+    write_evaluation_metrics_to_file(model.name, mse_train, mae_train, evs_train,
+                                     f"../../reports/station_{station_number}/train_metrics.txt")
+    write_evaluation_metrics_to_file(model.name, mse_test, mae_test, evs_test,
+                                     f"../../reports/station_{station_number}/metrics.txt")
+
+    print(f"Model for station {station_number} predicted")
+
+
+if __name__ == "__main__":
+    dir_path = "../../data/processed/"
+    for file in os.listdir(dir_path):
+        if file.startswith("station_") and file.endswith(".csv"):
+            station_number = file.split("_")[1].split(".")[0]
+            print(f"Predicting model for station {station_number}")
+            predict_model(int(station_number))
