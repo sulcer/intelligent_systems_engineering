@@ -2,6 +2,7 @@ import os
 import joblib
 import pandas as pd
 from keras.models import load_model
+from src.config import settings
 from src.models.utils.utils import create_test_train_split, create_time_series, write_evaluation_metrics_to_file, \
     evaluate_model
 
@@ -16,7 +17,7 @@ def predict_model(station_number: int) -> None:
     train_data = scaler.fit_transform(train_data)
     test_data = scaler.transform(test_data)
 
-    window_size = 2
+    window_size = settings.window_size
 
     X_train, y_train = create_time_series(train_data, window_size)
     X_test, y_test = create_time_series(test_data, window_size)

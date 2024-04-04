@@ -3,6 +3,7 @@ from datetime import datetime
 import pandas as pd
 import requests
 from src.data.fetched_entites import Station
+from src.config import settings
 
 
 class Fetcher:
@@ -22,31 +23,22 @@ class Fetcher:
 
         csv_file = f"data/raw/mbajk_stations.csv"
         if not os.path.exists(csv_file):
-            df = pd.DataFrame(
-                columns=["date",
-                         "number",
-                         "name",
-                         "address",
-                         "bike_stands",
-                         "available_bike_stands",
-                         "available_bikes",
-                         "lat",
-                         "lon"])
+            df = pd.DataFrame(columns=settings.raw_station_columns)
             df.to_csv(csv_file, index=False)
 
         for station_data in data:
             station = Station(**station_data)
 
             new_station_entry = pd.DataFrame([{
-                "date": date,
-                "number": station.number,
-                "name": station.name,
-                "address": station.address,
-                "bike_stands": station.bike_stands,
-                "available_bike_stands": station.available_bike_stands,
-                "available_bikes": station.available_bikes,
-                "lat": station.position["lat"],
-                "lon": station.position["lng"]
+                settings.raw_station_columns[0]: date,
+                settings.raw_station_columns[1]: station.number,
+                settings.raw_station_columns[2]: station.name,
+                settings.raw_station_columns[3]: station.address,
+                settings.raw_station_columns[4]: station.bike_stands,
+                settings.raw_station_columns[5]: station.available_bike_stands,
+                settings.raw_station_columns[6]: station.available_bikes,
+                settings.raw_station_columns[7]: station.position["lat"],
+                settings.raw_station_columns[8]: station.position["lng"]
             }])
 
             self.fetch_weather_data(date, station.position["lat"], station.position["lng"])
@@ -63,28 +55,31 @@ class Fetcher:
 
         csv_file = f"data/raw/weather.csv"
         if not os.path.exists(csv_file):
-            df = pd.DataFrame(
-                columns=["date",
-                         "temperature",
-                         "relative_humidity",
-                         "apparent_temperature",
-                         "precipitation",
-                         "rain",
-                         "surface_pressure"
-                         ])
+            df = pd.DataFrame(columns=settings.raw_weather_columns)
             df.to_csv(csv_file, index=False)
 
         new_weather_entry = pd.DataFrame([{
-            "date": date,
-            "temperature": data["temperature_2m"],
-            "relative_humidity": data["relative_humidity_2m"],
-            "apparent_temperature": data["apparent_temperature"],
-            "precipitation": data["precipitation"],
-            "rain": data["rain"],
-            "surface_pressure": data["surface_pressure"]
+            settings.raw_weather_columns[0]: date,
+            settings.raw_weather_columns[1]: data["temperature_2m"],
+            settings.raw_weather_columns[2]: data["relative_humidity_2m"],
+            settings.raw_weather_columns[3]: data["apparent_temperature"],
+            settings.raw_weather_columns[4]: data["precipitation"],
+            settings.raw_weather_columns[5]: data["rain"],
+            settings.raw_weather_columns[6]: data["surface_pressure"]
         }])
 
         new_weather_entry.to_csv(csv_file, mode="a", header=False, index=False)
+
+    def fetch_weather_forcast(self):
+        forcast_url = (f"{self.weather_url}latitude=46.5547&longitude=15.6467&hourly=temperature_2m,"
+                       f"relative_humidity_2m,apparent_temperature,precipitation,"
+                       f"surface_pressure&timezone=Europe%2FBerlin&forecast_days=1&forecast_hours=12")
+
+        response = requests.get(forcast_url)
+        response.raise_for_status()
+        forcast = response.json()["hourly"]
+
+        return forcast
 
 
 def main():

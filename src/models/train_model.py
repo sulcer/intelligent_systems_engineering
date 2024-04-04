@@ -2,8 +2,8 @@ import os
 import joblib
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
-from src.models.utils.utils import create_test_train_split, create_time_series, create_model, \
-    information_gain_feature_selection
+from src.config import settings
+from src.models.utils.utils import create_test_train_split, create_time_series, create_model
 
 
 def train_model(station_number: int) -> None:
@@ -15,14 +15,14 @@ def train_model(station_number: int) -> None:
     train_data = scaler.fit_transform(train_data)
     test_data = scaler.transform(test_data)
 
-    window_size = 2
+    window_size = settings.window_size
 
     X_train, y_train = create_time_series(train_data, window_size)
     X_test, y_test = create_time_series(test_data, window_size)
 
     model = create_model(X_train)
 
-    model.fit(X_train, y_train, epochs=10, batch_size=2, validation_data=(X_test, y_test), verbose=1)
+    model.fit(X_train, y_train, epochs=10, batch_size=64, validation_data=(X_test, y_test), verbose=1)
 
     if not os.path.exists(f"../../models/station_{station_number}"):
         os.makedirs(f"../../models/station_{station_number}")
