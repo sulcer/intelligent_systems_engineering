@@ -1,10 +1,12 @@
-name: Fetch
+name: Fetch and Process Data
 
 on:
   schedule:
     - cron: '0 * * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
 
 jobs:
   fetch:
@@ -20,10 +22,21 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install  poetry 
+          pip install dvc[s3]
+
+      - name: DVC setup
+        run: |
+          dvc remote modify origin --local access_key_id ${{ secrets.DVC_ACCESS_KEY_ID }}
+          dvc remote modify origin --local secret_access_key ${{ secrets.DVC_SECRET_ACCESS_KEY }}
+          dvc pull -r origin
 
       - name: Install dependencies
         run: |
           poetry install --with dev
+
+      - name: DVC pull
+        run: |
+          dvc pull -r origin
 
       - name: Fetch data
         run: |
@@ -33,10 +46,13 @@ jobs:
         run: |
           poetry run poe process_data
 
-      - name: Commit and push changes
+      - name: Commit and push data
         run: |
+          dvc add data
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add .
+          git pull
           git diff-index --quiet HEAD || (git commit -a -m "action: fetch latest data" --allow-empty)
           git push
+          dvc push -r origin
