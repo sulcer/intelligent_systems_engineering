@@ -1,6 +1,0 @@
-[core]
-    remote = origin
-    autostage = true
-['remote "origin"']
-    url = s3://dvc
-    endpointurl = https://dagshub.com/sulcer/intelligent_systems_engineering.s3
