@@ -56,6 +56,7 @@ def validate_merge(num_of_stations, df_stations, df_weather):
     num_of_fetches = data_length / num_of_stations
 
     print("[INFO] Number of fetches", num_of_fetches)
+    print("[INFO] Number of rows in test station", num_of_fetches)
 
     if len(check_station) >= num_of_fetches:
         raise ValueError("Number of rows must be less than number of fetches when merging")
