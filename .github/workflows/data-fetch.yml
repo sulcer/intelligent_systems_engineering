@@ -81,7 +81,7 @@ jobs:
 
       - name: Commit and push processed data
         run: |
-          dvc add data_processed
+          dvc add data
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add .
