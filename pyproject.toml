@@ -11,6 +11,7 @@ fetch_data = "python3 -m src.data.fetch_data"
 process_data = "python3 -m src.data.process_data"
 test = "pytest"
 lint = "ruff check ."
+test_api = "pytest src/tests/api_test.py"
 
 [tool.poetry.dependencies]
 python = "^3.12"

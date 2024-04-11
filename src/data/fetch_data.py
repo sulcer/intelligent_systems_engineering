@@ -71,7 +71,7 @@ class Fetcher:
         new_weather_entry.to_csv(csv_file, mode="a", header=False, index=False)
 
     def fetch_weather_forcast(self):
-        forcast_url = (f"{self.weather_url}latitude=46.5547&longitude=15.6467&hourly=temperature_2m,"
+        forcast_url = (f"{self.weather_url}latitude={settings.lat}&longitude={settings.lon}&hourly=temperature_2m,"
                        f"relative_humidity_2m,apparent_temperature,precipitation,"
                        f"surface_pressure&timezone=Europe%2FBerlin&forecast_days=1&forecast_hours=12")
 
@@ -80,6 +80,16 @@ class Fetcher:
         forcast = response.json()["hourly"]
 
         return forcast
+
+    def ping_weather_api(self):
+        response = requests.get(f"{self.weather_url}latitude={settings.lat}&longitude={settings.lon}")
+        response.raise_for_status()
+        return response.json()
+
+    def ping_station_api(self):
+        response = requests.get(self.url)
+        response.raise_for_status()
+        return response.json()
 
 
 def main():

@@ -1,8 +1,8 @@
 name: Fetch and Process Data
 
 on:
-#  schedule:
-#    - cron: '0 * * * *'
+  schedule:
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -37,6 +37,10 @@ jobs:
       - name: Install dependencies
         run: |
           poetry install --with dev
+
+      - name: Run tests
+        run: |
+          poetry run poe test_api
 
       - name: Fetch data
         run: |
@@ -95,6 +99,10 @@ jobs:
       - name: Install dependencies
         run: |
           poetry install --with dev
+
+      - name: Run tests
+        run: |
+          poetry run poe test_api
 
       - name: Process data
         run: |
