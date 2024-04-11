@@ -21,7 +21,7 @@ class Fetcher:
         response.raise_for_status()
         data = response.json()
 
-        csv_file = f"data/raw/mbajk_stations.csv"
+        csv_file = "data/raw/mbajk_stations.csv"
         if not os.path.exists(csv_file):
             df = pd.DataFrame(columns=settings.raw_station_columns)
             df.to_csv(csv_file, index=False)
@@ -53,7 +53,7 @@ class Fetcher:
         response.raise_for_status()
         data = response.json()["current"]
 
-        csv_file = f"data/raw/weather.csv"
+        csv_file = "data/raw/weather.csv"
         if not os.path.exists(csv_file):
             df = pd.DataFrame(columns=settings.raw_weather_columns)
             df.to_csv(csv_file, index=False)

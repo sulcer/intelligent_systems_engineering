@@ -28,7 +28,7 @@ window_size = settings.window_size
 
 
 @router.post("/predict_basic/{station_number}")
-def predict(station_number: int, data: List[PredictionInput]):
+def predict_one(station_number: int, data: List[PredictionInput]):
     model = load_model(f"models/station_{station_number}/model.h5")
     scaler = joblib.load(f"models/station_{station_number}/scaler.gz")
 
