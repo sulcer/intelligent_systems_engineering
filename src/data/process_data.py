@@ -27,7 +27,12 @@ def merge_data(df_stations, df_weather):
     merged_df = pd.concat([df_stations.tail(num_of_stations), df_weather.tail(num_of_stations)], axis=1)
     merged_df.drop(columns=["date"], inplace=True)
 
-    # merged_df.to_csv("../../data/processed/merged_data.csv", index=False)
+    output_file = "data/processed/current_data.csv"
+    if os.path.exists(output_file):
+        merged_df.to_csv(output_file, mode='a', header=False, index=False)
+    else:
+        merged_df.to_csv(output_file, index=False)
+
     return merged_df
 
 

@@ -171,10 +171,6 @@ jobs:
         run: |
           dvc pull -r origin
 
-#      - name: Get reference data
-#        run: |
-#          dvc get . data/processed/reference_data.csv --rev $SHA_FETCH --out data/processed/reference_data.csv --force
-#
-#      - name: Get current data
-#        run: |
-#          dvc get . data/processed/current_data.csv --rev $SHA_PROCESS --out data/processed/current_data.csv --force
+      - name: Get reference data
+        run: |
+          dvc get . data/processed/reference_data.csv --rev $SHA_FETCH --out data/processed/reference_data.csv --force
