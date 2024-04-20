@@ -12,6 +12,10 @@ process_data = "python3 -m src.data.process_data"
 test = "pytest"
 lint = "ruff check ."
 test_api = "pytest src/tests/api_test.py"
+validate = "python3 -m src.data.run_checkpoint"
+data_drift = "python3 -m src.data.data_drift"
+stability_tests = "python3 -m src.data.stability_tests"
+split_data = "python3 -m src.data.split_data"
 
 [tool.poetry.dependencies]
 python = "^3.12"

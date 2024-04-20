@@ -27,11 +27,16 @@ def merge_data(df_stations, df_weather):
     merged_df = pd.concat([df_stations.tail(num_of_stations), df_weather.tail(num_of_stations)], axis=1)
     merged_df.drop(columns=["date"], inplace=True)
 
+    target_feature = settings.target_feature
+    features = settings.features
+    selected_features = [target_feature] + features
+    print(f"[INFO] Selected features: {selected_features}")
+
     output_file = "data/processed/current_data.csv"
     if os.path.exists(output_file):
-        merged_df.to_csv(output_file, mode='a', header=False, index=False)
+        merged_df[selected_features].to_csv(output_file, mode='a', header=False, index=False)
     else:
-        merged_df.to_csv(output_file, index=False)
+        merged_df[selected_features].to_csv(output_file, index=False)
 
     return merged_df
 
