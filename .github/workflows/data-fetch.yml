@@ -167,12 +167,6 @@ jobs:
           dvc remote modify origin --local access_key_id ${{ secrets.DVC_ACCESS_KEY_ID }}
           dvc remote modify origin --local secret_access_key ${{ secrets.DVC_SECRET_ACCESS_KEY }}
 
-      - name: Pull data
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git pull
-
       - name: DVC pull
         run: |
           dvc pull -r origin
@@ -180,14 +174,3 @@ jobs:
       - name: Get reference data
         run: |
           dvc get . data/processed/current_data.csv --rev $SHA_FETCH --out data/processed/reference_data.csv --force
-
-      - name: Add reference data to DVC
-        run: |
-          dvc add data
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add .
-          git pull
-          git diff-index --quiet HEAD || (git commit -a -m "action: add reference data" --allow-empty)
-          dvc push -r origin
-          git push
