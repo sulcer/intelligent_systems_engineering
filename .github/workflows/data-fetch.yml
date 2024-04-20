@@ -64,6 +64,10 @@ jobs:
   process:
     runs-on: ubuntu-latest
     needs: fetch
+
+    outputs:
+        sha_process: ${{ steps.sha_process.outputs.SHA_PROCESS }}
+
     steps:
 
       - env:
@@ -118,3 +122,59 @@ jobs:
           git diff-index --quiet HEAD || (git commit -a -m "action: process latest data" --allow-empty)
           dvc push -r origin
           git push
+
+      - name: Get commit SHA and store it in GITHUB_OUTPUT
+        id: sha_process
+        run: echo "SHA_PROCESS=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  validation:
+    runs-on: ubuntu-latest
+    needs: process
+
+    outputs:
+      sha_new: ${{ steps.sha_new.outputs.SHA_NEW }}
+
+    steps:
+      - env:
+          SHA_FETCH: ${{ needs.fetch.outputs.sha_new }}
+          SHA_PROCESS: ${{ needs.process.outputs.sha_process }}
+        run: echo "$SHA_PROCESS"
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.process.outputs.sha_process }}
+          fetch-depth: 0
+
+      - name: Install Poetry
+        run: pipx install poetry
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+          cache: poetry
+
+      - name: Install dependencies
+        run: |
+          poetry install --with dev --no-interaction --no-root
+
+      - name: Install DVC
+        uses: iterative/setup-dvc@v1
+
+      - name: Configure DVC
+        run: |
+          dvc remote modify origin --local access_key_id ${{ secrets.DVC_ACCESS_KEY_ID }}
+          dvc remote modify origin --local secret_access_key ${{ secrets.DVC_SECRET_ACCESS_KEY }}
+
+      - name: DVC pull
+        run: |
+          dvc pull -r origin
+
+      - name: Get reference data
+        run: |
+          dvc get . data/processed/reference_data.csv --rev $SHA_FETCH --out data/processed/reference_data.csv --force
+
+      - name: Get current data
+        run: |
+          dvc get . data/processed/current_data.csv --rev $SHA_PROCESS --out data/processed/current_data.csv --force
