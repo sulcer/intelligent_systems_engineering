@@ -174,3 +174,5 @@ jobs:
       - name: Get reference data
         run: |
           dvc get . data/processed/current_data.csv --rev $SHA_FETCH --out data/processed/reference_data.csv --force
+          dvc add data
+          dvc push -r origin
