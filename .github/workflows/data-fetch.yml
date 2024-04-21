@@ -174,3 +174,39 @@ jobs:
       - name: Get reference data
         run: |
           dvc get . data/processed/current_data.csv --rev $SHA_FETCH --out data/processed/reference_data.csv --force
+
+      - name: Run validation
+        run: |
+          poetry run poe validate
+
+      - name: Run Data Drift
+        run: |
+          poetry run poe data_drift
+
+      - name: Run Stability tests
+        run: |
+          poetry run poe stability_tests
+
+      - name: Deploy DataDocs to Netlify
+        uses: nwtgck/actions-netlify@v1.2
+        with:
+          publish-dir: "reports/sites"
+          production-deploy: true
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+      - name: Commit and push processed data
+        run: |
+          dvc add data
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git pull
+          git diff-index --quiet HEAD || (git commit -a -m "action: validate latest data" --allow-empty)
+          dvc push -r origin
+          git push
+
+      - name: Get commit SHA and store it in GITHUB_OUTPUT
+        id: sha_new
+        run: echo "SHA_NEW=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
