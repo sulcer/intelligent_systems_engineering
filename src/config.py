@@ -38,10 +38,15 @@ class Settings(BaseSettings):
                                     "available_bikes",
                                     "lon",
                                     "lat"]
+    # dagshub configuration
+    mlflow_tracking_username: str
+    mlflow_tracking_uri: str
+    mlflow_tracking_password: str
+    dagshub_user_token: str
 
     __project_root = pathlib.Path(__file__).resolve().parent.parent
 
-    model_config = SettingsConfigDict(env_file=str(__project_root / ".env.local"))
+    model_config = SettingsConfigDict(env_file=f"{__project_root}/.env")
 
 
 settings = Settings()

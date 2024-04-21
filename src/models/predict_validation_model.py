@@ -4,6 +4,9 @@ from keras.models import load_model
 from src.config import settings
 from src.models.utils.utils import create_test_train_split, create_time_series, write_evaluation_metrics_to_file, \
     evaluate_model
+import dagshub
+from dagshub.data_engine.datasources import mlflow
+import dagshub.auth as dh_auth
 
 
 def predict_validation_model() -> None:
@@ -37,6 +40,23 @@ def predict_validation_model() -> None:
     print("Validation data predicted")
     print(f"MSE train: {mse_validation_train}")
 
+    mlflow.start_run(run_name="validation_model")
+    mlflow.log_metric("mse_validation_train", mse_validation_train)
+    mlflow.log_metric("mae_validation_train", mae_validation_train)
+    mlflow.log_metric("evs_validation_train", evs_validation_train)
+    mlflow.log_metric("mse_validation_test", mse_validation_test)
+    mlflow.log_metric("mae_validation_test", mae_validation_test)
+    mlflow.log_metric("evs_validation_test", evs_validation_test)
+
+    mlflow.end_run()
+
 
 if __name__ == "__main__":
+    dh_auth.add_app_token(token=settings.dagshub_user_token)
+    dagshub.init("intelligent_systems_engineering_dagshub", "sulcer", mlflow=True)
+    mlflow.set_tracking_uri(settings.mlflow_tracking_uri)
+
+    if mlflow.active_run():
+        mlflow.end_run()
+
     predict_validation_model()
