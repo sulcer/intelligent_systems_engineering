@@ -18,6 +18,7 @@ stability_tests = "python3 -m src.data.stability_tests"
 split_data = "python3 -m src.data.split_data"
 train_validation = "python3 -m src.models.train_validation_model"
 predict_validation = "python3 -m src.models.predict_validation_model"
+ks_test = "python3 -m src.data.ks"
 
 [tool.poetry.dependencies]
 python = "^3.12"

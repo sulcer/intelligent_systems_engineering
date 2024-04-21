@@ -1,4 +1,3 @@
-import os
 import joblib
 import pandas as pd
 from keras.models import load_model
@@ -9,8 +8,6 @@ from src.models.utils.utils import create_test_train_split, create_time_series, 
 
 def predict_validation_model() -> None:
     validation_data = pd.read_csv("data/processed/test.csv")
-
-    print(validation_data.head())
 
     validation_model = load_model("models/mbajk_validation/model.h5")
     scaler = joblib.load("models/mbajk_validation/scaler.gz")
