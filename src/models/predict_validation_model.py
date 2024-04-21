@@ -39,6 +39,11 @@ def predict_validation_model() -> None:
 
     print("Validation data predicted")
     print(f"MSE train: {mse_validation_train}")
+    print(f"MAE train: {mae_validation_train}")
+    print(f"EVS train: {evs_validation_train}")
+    print(f"MSE test: {mse_validation_test}")
+    print(f"MAE test: {mae_validation_test}")
+    print(f"EVS test: {evs_validation_test}")
 
     mlflow.start_run(run_name="validation_model")
     mlflow.log_metric("mse_validation_train", mse_validation_train)
@@ -53,7 +58,7 @@ def predict_validation_model() -> None:
 
 if __name__ == "__main__":
     dh_auth.add_app_token(token=settings.dagshub_user_token)
-    dagshub.init("intelligent_systems_engineering_dagshub", "sulcer", mlflow=True)
+    dagshub.init(settings.dagshub_repo_name, settings.mlflow_tracking_username, mlflow=True)
     mlflow.set_tracking_uri(settings.mlflow_tracking_uri)
 
     if mlflow.active_run():

@@ -43,6 +43,7 @@ class Settings(BaseSettings):
     mlflow_tracking_uri: str
     mlflow_tracking_password: str
     dagshub_user_token: str
+    dagshub_repo_name: str
 
     __project_root = pathlib.Path(__file__).resolve().parent.parent
 
