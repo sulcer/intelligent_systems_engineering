@@ -4,7 +4,7 @@ import pandas as pd
 
 def ks_test(sample1, sample2):
     if np.array_equal(sample1, sample2):
-        # If the samples are equal, return trivial values
+        # If the samples are equal, return trivial valuesx
         return 0.0, 1.0
     else:
         # Calculate the cumulative distribution functions
