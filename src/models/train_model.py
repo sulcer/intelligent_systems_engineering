@@ -7,7 +7,7 @@ from src.models.utils.utils import create_test_train_split, create_time_series, 
 
 
 def train_model(station_number: int) -> None:
-    data = pd.read_csv(f"../../data/processed/station_{station_number}.csv")
+    data = pd.read_csv(f"data/processed/station_{station_number}.csv")
     scaler = MinMaxScaler()
 
     train_data, test_data = create_test_train_split(data)
@@ -24,19 +24,20 @@ def train_model(station_number: int) -> None:
 
     model.fit(X_train, y_train, epochs=10, batch_size=64, validation_data=(X_test, y_test), verbose=1)
 
-    if not os.path.exists(f"../../models/station_{station_number}"):
-        os.makedirs(f"../../models/station_{station_number}")
+    if not os.path.exists(f"models/station_{station_number}"):
+        os.makedirs(f"models/station_{station_number}")
 
-    joblib.dump(scaler, f"../../models/station_{station_number}/scaler.gz")
-    model.save(f"../../models/station_{station_number}/model.h5")
+    joblib.dump(scaler, f"models/station_{station_number}/scaler.gz")
+    model.save(f"models/station_{station_number}/model.h5")
 
     print(f"Model for station {station_number} trained")
 
 
 if __name__ == "__main__":
-    dir_path = "../../data/processed/"
+    dir_path = "data/processed/"
     for file in os.listdir(dir_path):
         if file.startswith("station_") and file.endswith(".csv"):
             station_number = file.split("_")[1].split(".")[0]
             print(f"Training model for station {station_number}")
             train_model(int(station_number))
+    print("[INFO] All models trained successfully!")
