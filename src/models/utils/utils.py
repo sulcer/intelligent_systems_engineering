@@ -5,7 +5,9 @@ from keras.models import Sequential
 from keras.layers import GRU, Dropout, Dense, Input
 from keras.optimizers import Adam
 from sklearn.feature_selection import mutual_info_regression
+from sklearn.impute import SimpleImputer
 from sklearn.metrics import mean_squared_error, mean_absolute_error, explained_variance_score
+from sklearn.pipeline import Pipeline
 
 
 def create_test_train_split(dataset: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
@@ -72,3 +74,18 @@ def evaluate_model(y_actual, predicted, dataset, scaler):
     evs = explained_variance_score(actual, pred)
 
     return mse, mae, evs
+
+
+def run_sklearn_pipeline(data):
+    if data.isnull().values.any():
+        print("[WARN]: Missing data in row")
+
+        numerical_transformer = Pipeline(steps=[
+            ('imputer', SimpleImputer(strategy='mean')),
+        ])
+
+        pipeline = Pipeline(steps=[
+            ('preprocessor', numerical_transformer),
+        ])
+
+        pipeline.fit_transform(data)

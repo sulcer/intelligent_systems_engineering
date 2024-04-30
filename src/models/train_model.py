@@ -3,11 +3,14 @@ import joblib
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from src.config import settings
-from src.models.utils.utils import create_test_train_split, create_time_series, create_model
+from src.models.utils.utils import create_test_train_split, create_time_series, create_model, run_sklearn_pipeline
 
 
 def train_model(station_number: int) -> None:
     data = pd.read_csv(f"data/processed/station_{station_number}.csv")
+
+    run_sklearn_pipeline(data)
+
     scaler = MinMaxScaler()
 
     train_data, test_data = create_test_train_split(data)
