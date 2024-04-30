@@ -11,7 +11,7 @@ from sklearn.pipeline import Pipeline
 
 
 def create_test_train_split(dataset: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    test_data_size = round(0.2 * len(dataset))
+    test_data_size = round(0.1 * len(dataset))
     train_data = dataset[:-test_data_size]
     test_data = dataset[-test_data_size:]
 

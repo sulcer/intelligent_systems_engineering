@@ -41,6 +41,11 @@ great-expectations = "^0.18.12"
 evidently = "^0.4.19"
 mlflow = "^2.12.1"
 dagshub = "^0.3.24"
+tf2onnx = "^1.16.1"
+onnxruntime = "^1.17.3"
+tf-keras = "^2.16.0"
+tensorflow-model-optimization = "^0.8.0"
+cachetools = "^5.3.3"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.3.2"
