@@ -4,13 +4,10 @@ import onnx
 from enum import Enum, auto
 from mlflow.onnx import load_model as load_onnx
 from mlflow.sklearn import load_model as load_scaler
-from dagshub.data_engine.datasources import mlflow
 from mlflow import MlflowClient
-from sklearn.preprocessing import MinMaxScaler
 import dagshub
 from dagshub.data_engine.datasources import mlflow
 import dagshub.auth as dh_auth
-
 from src.config import settings
 
 
@@ -27,9 +24,11 @@ def get_latest_model(station_number: int):
 
 
 def get_latest_scaler(station_number: int):
+    print("preden nalozis scaler!!!!!!!!")
     try:
         client = MlflowClient()
-        model_version = client.get_latest_versions("mbajk_station_" + str(station_number), stages=["staging"])[0]
+        model_version = (
+            client.get_latest_versions("mbajk_station_" + str(station_number) + "_scaler", stages=["staging"]))[0]
         model_url = model_version.source
         scaler = load_scaler(model_url)
         return scaler
@@ -51,9 +50,11 @@ def get_production_model(station_number: int):
 
 
 def get_production_scaler(station_number: int):
+    print("preden nalozis scaler!!!!!!!!")
     try:
         client = MlflowClient()
-        model_version = client.get_latest_versions("mbajk_station_" + str(station_number), stages=["production"])[0]
+        model_version = (
+            client.get_latest_versions("mbajk_station_" + str(station_number) + "_scaler", stages=["production"]))[0]
         model_url = model_version.source
         scaler = load_scaler(model_url)
         return scaler
@@ -72,10 +73,13 @@ def download_model(station_number: int, model_type: ModelType) -> tuple:
     dagshub.init(settings.dagshub_repo_name, settings.mlflow_tracking_username, mlflow=True)
     mlflow.set_tracking_uri(settings.mlflow_tracking_uri)
 
+    print(f"!!!!!!{model_type.name.lower()} !!!! {station_number}")
+
     model_func = get_latest_model if model_type == ModelType.LATEST else get_production_model
     scaler_func = get_latest_scaler if model_type == ModelType.LATEST else get_production_scaler
 
     model = model_func(station_number)
+    print("got model!")
     scaler = scaler_func(station_number)
 
     folder_name = f"models/station_{station_number}"

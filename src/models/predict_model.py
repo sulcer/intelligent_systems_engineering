@@ -1,7 +1,5 @@
 import os
-import joblib
 import pandas as pd
-from keras.models import load_model
 from src.config import settings
 from src.models.model_registry import download_model, ModelType
 from src.models.utils.utils import create_test_train_split, create_time_series, write_evaluation_metrics_to_file, \
@@ -35,7 +33,7 @@ def set_production_model(station_number: int) -> None:
 
 
 def predict_model(station_number: int) -> None:
-    mlflow.start_run(run_name=f"mbajk_station_{station_number}", experiment_id="1", nested=True)
+    mlflow.start_run(run_name=f"mbajk_station_{station_number}", nested=True)
 
     production_model_path, production_scaler = download_model(station_number, ModelType.PRODUCTION)
     latest_model_path, scaler = download_model(station_number, ModelType.LATEST)
@@ -52,9 +50,6 @@ def predict_model(station_number: int) -> None:
 
     data = pd.read_csv(f"data/processed/station_{station_number}.csv")
 
-    model = load_model(f"models/station_{station_number}/model.h5")
-    scaler = joblib.load(f"models/station_{station_number}/scaler.gz")
-
     train_data, test_data = create_test_train_split(data)
     test_data = scaler.transform(test_data)
 
@@ -66,9 +61,9 @@ def predict_model(station_number: int) -> None:
 
     mse_latest, mae_latest, evs_latest = evaluate_model(y_test, latest_model_predictions, test_data, scaler)
 
-    mlflow.log_metric("MSE_latest", mse_latest)
-    mlflow.log_metric("MAE_latest", mae_latest)
-    mlflow.log_metric("EVS_latest", evs_latest)
+    mlflow.log_metric("mse_latest", mse_latest)
+    mlflow.log_metric("mae_latest", mae_latest)
+    mlflow.log_metric("evs_latest", evs_latest)
 
     production_model_predictions = production_model.run(["output"], {"input": X_test})[0]
 
@@ -83,11 +78,13 @@ def predict_model(station_number: int) -> None:
     if not os.path.exists(f"reports/station_{station_number}"):
         os.makedirs(f"reports/station_{station_number}")
 
-    write_evaluation_metrics_to_file(model.name, mse_latest, mae_latest, evs_latest,
+    write_evaluation_metrics_to_file("GRU", mse_latest, mae_latest, evs_latest,
                                      f"reports/station_{station_number}/latest_metrics.txt")
 
-    write_evaluation_metrics_to_file(model.name, mse_production, mae_production, evs_production,
+    write_evaluation_metrics_to_file("GRU", mse_production, mae_production, evs_production,
                                      f"reports/station_{station_number}/production_metrics.txt")
+
+    mlflow.end_run()
 
     print(f"[INFO]: Model for station {station_number} predicted")
 

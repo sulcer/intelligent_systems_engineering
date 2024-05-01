@@ -18,7 +18,7 @@ from mlflow.sklearn import log_model as log_sklearn_model
 def train_model(station_number: int) -> None:
     client = MlflowClient()
 
-    mlflow.start_run(run_name=f"mbajk_station_{station_number}", experiment_id="1", nested=True)
+    mlflow.start_run(run_name=f"mbajk_station_{station_number}")
 
     data = pd.read_csv(f"data/processed/station_{station_number}.csv")
 
@@ -73,12 +73,6 @@ def train_model(station_number: int) -> None:
                                      run_id=scaler.run_id)
 
     client.transition_model_version_stage("mbajk_station_" + str(station_number) + "_scaler", sv.version, "staging")
-
-    if not os.path.exists(f"models/station_{station_number}"):
-        os.makedirs(f"models/station_{station_number}")
-
-    joblib.dump(scaler, f"models/station_{station_number}/scaler.gz")
-    model.save(f"models/station_{station_number}/model.h5")
 
     mlflow.log_param("window_size", window_size)
     mlflow.log_param("batch_size", batch_size)
