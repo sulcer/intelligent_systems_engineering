@@ -1,5 +1,4 @@
 import os
-import joblib
 import pandas as pd
 from mlflow.models import infer_signature
 from sklearn.preprocessing import MinMaxScaler

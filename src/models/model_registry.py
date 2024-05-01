@@ -24,7 +24,6 @@ def get_latest_model(station_number: int):
 
 
 def get_latest_scaler(station_number: int):
-    print("preden nalozis scaler!!!!!!!!")
     try:
         client = MlflowClient()
         model_version = (
@@ -50,7 +49,6 @@ def get_production_model(station_number: int):
 
 
 def get_production_scaler(station_number: int):
-    print("preden nalozis scaler!!!!!!!!")
     try:
         client = MlflowClient()
         model_version = (
@@ -73,13 +71,10 @@ def download_model(station_number: int, model_type: ModelType) -> tuple:
     dagshub.init(settings.dagshub_repo_name, settings.mlflow_tracking_username, mlflow=True)
     mlflow.set_tracking_uri(settings.mlflow_tracking_uri)
 
-    print(f"!!!!!!{model_type.name.lower()} !!!! {station_number}")
-
     model_func = get_latest_model if model_type == ModelType.LATEST else get_production_model
     scaler_func = get_latest_scaler if model_type == ModelType.LATEST else get_production_scaler
 
     model = model_func(station_number)
-    print("got model!")
     scaler = scaler_func(station_number)
 
     folder_name = f"models/station_{station_number}"
