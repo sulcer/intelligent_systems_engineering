@@ -21,6 +21,7 @@ predict_validation = "python3 -m src.models.predict_validation_model"
 ks_test = "python3 -m src.data.ks"
 train = "python3 -m src.models.train_model"
 predict = "python3 -m src.models.predict_model"
+download_models = "python3 -m src.models.download_models"
 
 [tool.poetry.dependencies]
 python = "^3.12"

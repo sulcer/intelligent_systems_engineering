@@ -48,3 +48,20 @@ jobs:
       - name: Install dependencies
         run: |
           poetry install --with dev
+
+      - name: Train models
+        run: |
+          poetry run poe train
+
+      - name: Predict models
+        run: |
+          poetry run poe predict
+
+      - name: Commit and push models
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git diff-index --quiet HEAD || (git commit -a -m "action: train models" --allow-empty)
+          dvc push -r origin
+          git push
