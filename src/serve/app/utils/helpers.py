@@ -13,7 +13,8 @@ def create_time_series(data, window_size, feature_cols):
 
 
 def use_model_prediction(data, model, scaler, window_size, feature_cols):
-    prediction = model.predict(data)
+    prediction = model.run(["output"], {"input": data})[0]
+
     prediction_copies_array = np.repeat(prediction, len(feature_cols), axis=-1)
     prediction_reshaped = np.reshape(prediction_copies_array, (len(prediction), len(feature_cols)))
     prediction = scaler.inverse_transform(prediction_reshaped)[:, 0]

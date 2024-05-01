@@ -4,9 +4,12 @@ import pandas as pd
 from fastapi import APIRouter, HTTPException
 from keras.models import load_model
 from pydantic import BaseModel
+from sklearn.preprocessing import MinMaxScaler
+
 from src.config import settings
 from src.data.fetch_data import Fetcher
 from src.serve.app.utils.helpers import use_model_prediction, create_time_series
+import onnxruntime as ort
 
 router = APIRouter(
     prefix="/mbajk",
@@ -54,8 +57,8 @@ def predict(station_number: int, n_time_units: int):
     fetcher = Fetcher()
     forcast = fetcher.fetch_weather_forcast()
 
-    model = load_model(f"models/station_{station_number}/model.h5")
-    scaler = joblib.load(f"models/station_{station_number}/scaler.gz")
+    model = ort.InferenceSession(f"models/station_{station_number}/model_production.onnx")
+    scaler: MinMaxScaler = joblib.load(f"models/station_{station_number}/scaler_production.gz")
 
     dataset = pd.read_csv(f"data/processed/station_{station_number}.csv")
 
