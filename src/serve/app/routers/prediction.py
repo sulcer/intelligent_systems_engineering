@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from typing import List
 import joblib
 import pandas as pd
@@ -5,9 +6,9 @@ from fastapi import APIRouter, HTTPException
 from keras.models import load_model
 from pydantic import BaseModel
 from sklearn.preprocessing import MinMaxScaler
-
 from src.config import settings
 from src.data.fetch_data import Fetcher
+from src.serve.app.services.logging_service import LoggingService
 from src.serve.app.utils.helpers import use_model_prediction, create_time_series
 import onnxruntime as ort
 
@@ -83,5 +84,17 @@ def predict(station_number: int, n_time_units: int):
 
         last_rows.pop(0)
         last_rows.append(new_row)
+
+    now = datetime.now()
+    logged_predictions = []
+    for i, p in enumerate(predictions):
+        prediction_time = now + timedelta(hours=i+1)
+
+        logged_predictions.append({
+            "prediction": p,
+            "date": prediction_time.isoformat()
+        })
+
+    LoggingService.save_log(station_number, n_time_units, logged_predictions)
 
     return predictions
