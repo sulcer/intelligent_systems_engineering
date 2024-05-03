@@ -92,7 +92,7 @@ def predict(station_number: int, n_time_units: int):
 
         logged_predictions.append({
             "prediction": p,
-            "date": prediction_time
+            "date": prediction_time.isoformat()
         })
 
     LoggingService.save_log(station_number, n_time_units, logged_predictions)
