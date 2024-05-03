@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List
 import joblib
 import pandas as pd
@@ -85,14 +85,14 @@ def predict(station_number: int, n_time_units: int):
         last_rows.pop(0)
         last_rows.append(new_row)
 
-    now = datetime.now()
+    now = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
     logged_predictions = []
     for i, p in enumerate(predictions):
-        prediction_time = now + timedelta(hours=i+1)
+        prediction_time = now + timedelta(hours=i + 1)
 
         logged_predictions.append({
             "prediction": p,
-            "date": prediction_time.isoformat()
+            "date": prediction_time
         })
 
     LoggingService.save_log(station_number, n_time_units, logged_predictions)

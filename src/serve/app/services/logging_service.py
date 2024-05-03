@@ -15,7 +15,7 @@ class LoggingService:
             station_number=station_number,
             n_time_units=n_time_units,
             predictions=predictions_json,
-            created_at=datetime.now(timezone.utc)
+            created_at=datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
         )
 
         Session = sessionmaker(bind=create_database_engine())

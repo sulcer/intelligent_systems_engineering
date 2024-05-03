@@ -25,6 +25,8 @@ def main():
 
     all_predictions = session.query(Prediction).all()
 
+    print(all_predictions[-1].predictions)
+
     dir_path = "data/processed/"
 
     station_numbers = [file.split("_")[1].split(".")[0] for file in os.listdir(dir_path) if file.startswith("station")]
@@ -35,6 +37,7 @@ def main():
 
         station_data = pd.read_csv(f"data/processed/station_{station_number}.csv")
         station_data = bind_latest_fetch_timestamp(station_data)
+        station_data = process_date(station_data)
 
         errors = []
         for pred in all_predictions:
@@ -47,6 +50,7 @@ def main():
 
                 if row.empty:
                     print(f"Prediction for station {station_number} at date {date} not found in station data")
+                    continue
 
                 actual = row["available_bike_stands"].values[0]
                 error = actual - prediction
@@ -70,6 +74,11 @@ def bind_latest_fetch_timestamp(station_data: pd.DataFrame) -> pd.DataFrame:
 
     station_data["date"] = fetch_timestamps
     return station_data
+
+
+def process_date(df: pd.DataFrame) -> pd.DataFrame:
+    df["date"] = pd.to_datetime(df["date"]).dt.floor("h")
+    return df
 
 
 if __name__ == "__main__":
