@@ -9,10 +9,8 @@ const BikeStationsMap = () => {
     const router = useRouter();
     const {data: stations = []} = useBikeStations();
 
-    console.log(stations);
-
     return (
-        <div>
+        <>
             <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY as string}>
                 <Map
                     style={{width: '100vw', height: '100vh'}}
@@ -33,7 +31,7 @@ const BikeStationsMap = () => {
                     ))}
                 </Map>
             </APIProvider>
-        </div>
+        </>
     );
 };
 
