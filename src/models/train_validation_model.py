@@ -2,7 +2,6 @@ import os
 import joblib
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
-from src.config import settings
 from src.models.utils.utils import create_test_train_split, create_time_series, create_model
 
 

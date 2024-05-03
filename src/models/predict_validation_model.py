@@ -2,8 +2,7 @@ import joblib
 import pandas as pd
 from keras.models import load_model
 from src.config import settings
-from src.models.utils.utils import create_test_train_split, create_time_series, write_evaluation_metrics_to_file, \
-    evaluate_model
+from src.models.utils.utils import create_test_train_split, create_time_series, evaluate_model
 import dagshub
 from dagshub.data_engine.datasources import mlflow
 import dagshub.auth as dh_auth

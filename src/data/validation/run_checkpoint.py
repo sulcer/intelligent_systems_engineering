@@ -1,4 +1,3 @@
-import os
 import great_expectations as ge
 import pandas as pd
 from great_expectations.checkpoint.types.checkpoint_result import CheckpointResult
