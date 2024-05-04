@@ -3,7 +3,8 @@ import pandas as pd
 from mlflow.models import infer_signature
 from sklearn.preprocessing import MinMaxScaler
 from src.config import settings
-from src.models.utils.utils import create_test_train_split, create_time_series, create_model, run_sklearn_pipeline
+from src.models.utils.utils import create_test_train_split, create_time_series, run_sklearn_pipeline, \
+    create_quantized_model
 import dagshub
 from dagshub.data_engine.datasources import mlflow
 import dagshub.auth as dh_auth
@@ -35,7 +36,7 @@ def train_model(station_number: int) -> None:
     X_train, y_train = create_time_series(train_data, window_size)
     X_test, y_test = create_time_series(test_data, window_size)
 
-    model = create_model(X_train)
+    model = create_quantized_model(X_train)
 
     epochs = 10
     batch_size = 64
