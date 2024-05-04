@@ -26,6 +26,7 @@ app.include_router(bike_stations_router)
 async def startup_event():
     download_model_registry()
 
+
 @app.get("/")
 def root():
     return RedirectResponse(url="/docs")
