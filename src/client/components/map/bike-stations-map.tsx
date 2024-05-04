@@ -4,6 +4,7 @@ import {APIProvider, Map} from '@vis.gl/react-google-maps';
 import StationMarker from "@/components/map/station-marker";
 import {useRouter} from "next/navigation";
 import {useBikeStations} from "@/lib/hooks/bike-stations";
+import PredictionDialog from "@/components/prediction/prediction-dialog";
 
 const BikeStationsMap = () => {
     const router = useRouter();
@@ -21,12 +22,11 @@ const BikeStationsMap = () => {
                     mapId={'map-id'}
                 >
                     {stations.map(station => (
-                        <StationMarker
+                        <PredictionDialog
                             key={station.number}
+                            stationNumber={station.number}
                             lat={station.position.lat}
                             lon={station.position.lng}
-                            number={station.number}
-                            onClick={() => router.push(`/bike-station/${station.number}`)}
                         />
                     ))}
                 </Map>

@@ -14,9 +14,6 @@ const Page = ({params}: PageProps) => {
     const { data: station, isLoading, isError } = useBikeStationByNumber(Number(params.stationNumber));
     const { data: predictions, isLoading: isLoadingPredictions, isError: isErrorPredictions } = useBikeStationPredictions(Number(params.stationNumber), 7);
 
-    console.log(station)
-    console.log(predictions)
-
     return (
         <div className={'m-5'}>
             {isLoading ? <LoadingSpinner /> :
