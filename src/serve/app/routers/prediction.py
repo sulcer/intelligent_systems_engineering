@@ -1,13 +1,13 @@
 from datetime import datetime, timedelta, timezone
 from typing import List
 import joblib
-import pandas as pd
 from fastapi import APIRouter, HTTPException
 from keras.models import load_model
 from pydantic import BaseModel
 from sklearn.preprocessing import MinMaxScaler
 from src.config import settings
 from src.data.fetch_data import Fetcher
+from src.serve.app.services.bike_station_data_service import BikeStationService
 from src.serve.app.services.logging_service import LoggingService
 from src.serve.app.utils.helpers import use_model_prediction, create_time_series
 import onnxruntime as ort
@@ -61,7 +61,8 @@ def predict(station_number: int, n_time_units: int):
     model = ort.InferenceSession(f"models/station_{station_number}/model_production.onnx")
     scaler: MinMaxScaler = joblib.load(f"models/station_{station_number}/scaler_production.gz")
 
-    dataset = pd.read_csv(f"data/processed/station_{station_number}.csv")
+    bike_station_service = BikeStationService()
+    dataset = bike_station_service.get_bike_station_data(station_number)
 
     predictions = []
     last_rows = dataset.tail(window_size).values.tolist()
