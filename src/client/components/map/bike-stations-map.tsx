@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
 import {APIProvider, Map} from '@vis.gl/react-google-maps';
-import StationMarker from "@/components/map/station-marker";
 import {useRouter} from "next/navigation";
 import {useBikeStations} from "@/lib/hooks/bike-stations";
 import PredictionDialog from "@/components/prediction/prediction-dialog";
