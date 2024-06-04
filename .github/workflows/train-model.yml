@@ -1,10 +1,10 @@
 name: Train models
 
 on:
-  workflow_run:
-    workflows: [ "Fetch and Process Data" ]
-    types:
-      - completed
+  # workflow_run:
+  #   workflows: [ "Fetch and Process Data" ]
+  #   types:
+  #     - completed
   workflow_dispatch:
 
 env:
